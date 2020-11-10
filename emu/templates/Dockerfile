@@ -41,8 +41,8 @@ RUN mkdir -p /android/sdk/platforms && \
 # as this will improve caching.
 COPY launch-emulator.sh /android/sdk/
 COPY platforms /android/sdk/
-COPY buildtools /android/sdk/
-COPY cmdline-tools /android/sdk/
+COPY build-tools /android/sdk/
+COPY tools /android/sdk/
 COPY platform-tools/adb /android/sdk/platform-tools/adb
 COPY default.pa /etc/pulse/default.pa
 
@@ -70,7 +70,7 @@ ENV ANDROID_AVD_HOME /android-home
 ENV ANDROID_HOME /android/sdk
 WORKDIR /android/sdk
 
-ENV PATH="$ANDROID_HOME/cmdline-tools/bin:${PATH}"
+ENV PATH="$ANDROID_HOME/tools/bin:${PATH}"
 
 RUN yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses || true
 
