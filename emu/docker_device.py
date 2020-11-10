@@ -103,7 +103,7 @@ class DockerDevice(object):
         "FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04 AS emulator\n"
         + "ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display"
     )
-    DEFAULT_BASE_IMG = "FROM debian:stretch-slim AS emulator"
+    DEFAULT_BASE_IMG = "FROM openjdk:8-jdk AS emulator"
 
     def __init__(self, emulator, sysimg, dest_dir, gpu=False, repo="", tag="", name=""):
 

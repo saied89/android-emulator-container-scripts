@@ -18,14 +18,18 @@
 # pulse audio is needed due to some webrtc dependencies.
 RUN apt-get update && apt-get install -y --no-install-recommends \
 # Emulator & video bridge dependencies
-    libc6 libdbus-1-3 libfontconfig1 libgcc1 \
+    libc6 libdbus-1-3 libfontconfig1 libgcc1 lib32stdc++6 lib32z1 \
     libpulse0 libtinfo5 libx11-6 libxcb1 libxdamage1 \
     libnss3 libxcomposite1 libxcursor1 libxi6 \
     libxext6 libxfixes3 zlib1g libgl1 pulseaudio socat \
+    build-essential \
+    ruby-dev \
 # Enable turncfg through usage of curl
     curl ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN gem install fastlane -N
 
 # Now we configure the user account under which we will be running the emulator
 RUN mkdir -p /android/sdk/platforms && \
@@ -36,6 +40,9 @@ RUN mkdir -p /android/sdk/platforms && \
 # Make sure to place files that do not change often in the higher layers
 # as this will improve caching.
 COPY launch-emulator.sh /android/sdk/
+COPY platforms /android/sdk/
+COPY buildtools /android/sdk/
+COPY cmdline-tools /android/sdk/
 COPY platform-tools/adb /android/sdk/platform-tools/adb
 COPY default.pa /etc/pulse/default.pa
 
@@ -60,7 +67,12 @@ EXPOSE 8554
 
 ENV ANDROID_SDK_ROOT /android/sdk
 ENV ANDROID_AVD_HOME /android-home
+ENV ANDROID_HOME /android/sdk
 WORKDIR /android/sdk
+
+ENV PATH="$ANDROID_HOME/cmdline-tools/bin:${PATH}"
+
+RUN yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses || true
 
 # You will need to make use of the grpc snapshot/webrtc functionality to actually interact with
 # the emulator.
